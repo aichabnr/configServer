@@ -1,0 +1,65 @@
+server:
+  port: 8081
+
+
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/marketplace}
+          jwk-set-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/marketplace}/protocol/openid-connect/certs
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# RabbitMQ Exchange / Queue config
+rabbitmq:
+  exchange: marketplace.exchange
+  queues:
+    user-created: user.created
+    user-deleted: user.deleted
+  routing-keys:
+    user-created: user.created
+    user-deleted: user.deleted
+
+logging:
+  level:
+    com.marketplace.userservice: DEBUG
