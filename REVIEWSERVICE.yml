@@ -2,8 +2,6 @@ server:
   port: 8089
 
 spring:
-  config:
-    import: "optional:configserver:"
   datasource:
     url: "jdbc:mysql://localhost:3306/reviewdb?createDatabaseIfNotExist=true"
     username: root
